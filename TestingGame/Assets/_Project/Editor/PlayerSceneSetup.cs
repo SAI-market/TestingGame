@@ -64,7 +64,7 @@ public static class PlayerSceneSetup
                    "F3 muestra el overlay de debug. Revisá SETUP-Editor.md si algo no se ve bien.");
     }
 
-    private static void EnsureDirectionalLight()
+    public static void EnsureDirectionalLight()
     {
         foreach (var light in Object.FindObjectsOfType<Light>())
         {
@@ -143,11 +143,16 @@ public static class PlayerSceneSetup
 
     // ---------------------------------------------------------------- Player hierarchy
 
-    private static GameObject BuildPlayer(MovementSettings movementSettings, LookSettings lookSettings, ViewmodelSettings viewmodelSettings, InputActionAsset inputActions)
+    public static GameObject BuildPlayer(MovementSettings movementSettings, LookSettings lookSettings, ViewmodelSettings viewmodelSettings, InputActionAsset inputActions)
+    {
+        return BuildPlayer(movementSettings, lookSettings, viewmodelSettings, inputActions, new Vector3(0f, 1f, -10f));
+    }
+
+    public static GameObject BuildPlayer(MovementSettings movementSettings, LookSettings lookSettings, ViewmodelSettings viewmodelSettings, InputActionAsset inputActions, Vector3 spawnPosition)
     {
         var player = new GameObject("Player");
         player.layer = PlayerLayer;
-        player.transform.position = new Vector3(0f, 1f, -10f);
+        player.transform.position = spawnPosition;
 
         var controller = player.AddComponent<CharacterController>();
         controller.radius = 0.35f;
@@ -235,7 +240,7 @@ public static class PlayerSceneSetup
         return player;
     }
 
-    private static void BuildPlaceholderHands(Transform parent)
+    public static void BuildPlaceholderHands(Transform parent)
     {
         CreateHandCube(parent, "Hand_L_Placeholder", new Vector3(-0.15f, 0f, 0.3f));
         CreateHandCube(parent, "Hand_R_Placeholder", new Vector3(0.15f, 0f, 0.3f));
@@ -252,7 +257,7 @@ public static class PlayerSceneSetup
         Object.DestroyImmediate(hand.GetComponent<Collider>());
     }
 
-    private static GameObject CreateChild(Transform parent, string name, Vector3 localPosition)
+    public static GameObject CreateChild(Transform parent, string name, Vector3 localPosition)
     {
         var go = new GameObject(name);
         go.transform.SetParent(parent, false);
@@ -260,7 +265,7 @@ public static class PlayerSceneSetup
         return go;
     }
 
-    private static void SetField(Object target, string fieldName, Object value)
+    public static void SetField(Object target, string fieldName, Object value)
     {
         var so = new SerializedObject(target);
         var prop = so.FindProperty(fieldName);

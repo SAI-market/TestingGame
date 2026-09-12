@@ -86,3 +86,84 @@ Toda la jerarquía y el cableado de referencias que hace `PlayerSceneSetup.cs` e
 detalle en la sección 1.2 y en el Paso 3/4 de versiones anteriores de este documento — podés leer
 directamente el código de la herramienta (`Assets/_Project/Editor/PlayerSceneSetup.cs`) como
 referencia exacta de qué campo va en qué componente si querés replicarlo manualmente o adaptarlo.
+
+---
+
+# Limpieza Paranormal — vertical slice completo
+
+A partir de acá el proyecto ya no es solo el controller de movimiento: es el juego completo
+("Limpieza Paranormal") descripto en el diseño — casa jugable, limpieza, objetivos, sistema
+paranormal semi-aleatorio, entidad con IA, sótano y final. Igual que con el player, no tengo forma
+de controlar la GUI de Unity desde acá, así que todo está armado como código + una herramienta de
+Editor que construye la escena entera de un solo click.
+
+## Paso 0 — Dejar que el proyecto compile
+
+Abrí el proyecto, esperá a que termine de compilar todos los scripts nuevos (`Assets/_Project/Scripts/**`
+tiene ahora carpetas `Interaction`, `Cleaning`, `Tools`, `Objectives`, `Paranormal/Activity`,
+`Paranormal/Events`, `Paranormal/Entity`, `Environment`, `Audio`, `UI`, `Core`) y mirá la consola: no
+debería haber nada rojo.
+
+## Paso 1 — Correr el bootstrap de la casa
+
+Menú **`Tools → LimpiezaParanormal → Construir Casa (Vertical Slice)`**.
+
+A diferencia de `PlayerSceneSetup`, esta herramienta **no** construye sobre la escena que tengas
+abierta: crea (o reabre) una escena dedicada en `Assets/_Project/Scenes/LimpiezaParanormal.unity`,
+la registra en Build Settings (así `SceneManager.LoadScene` puede reiniciar la partida) y arma ahí
+adentro:
+
+- La casa completa con primitivas: entrada, living, cocina, pasillo, baño, habitación y un sótano
+  bajo escaleras, inicialmente bloqueado con `Door_Basement` (`SimpleDoor` con `startsLocked = true`).
+- Muebles simples (sofá, mesada, cama, etc.) y ~10 manchas de suciedad (`CleanableSpot`) repartidas
+  en 4 objetivos: cocina, living, baño, habitación.
+- El player (reutilizando `PlayerSceneSetup.BuildPlayer`) parado en la entrada, extendido con
+  `PlayerInteractor`, `ToolController` y las 4 herramientas (aspiradora/escoba/trapo/linterna) como
+  geometría simple bajo el viewmodel.
+- El sistema paranormal completo: `ParanormalActivityManager` (actividad interna 0-100, nunca
+  mostrada), `ParanormalEventScheduler` con 8 anomalías registradas (puerta, luz, objeto que se
+  mueve, dos sonidos ambiente, TV, sombra, falla de herramienta), y la `Entity` (cápsula placeholder
+  con `NavMeshAgent` + `EntityController`, estados Idle/Observing/Manifesting/Chasing/Attacking).
+- `GameManager` orquestando la progresión: limpieza → objetivos completos → puerta principal se
+  traba → puerta del sótano se abre → el jugador baja → la entidad persigue de verdad → escape o
+  muerte.
+- La UI completa (canvas con crosshair, prompt de interacción, herramienta actual, batería de
+  linterna, lista de objetivos, mensajes narrativos y pantalla de final) y el NavMesh ya horneado.
+
+Después de correrla, la escena queda **guardada** (a diferencia de `PlayerSceneSetup`, esta sí
+guarda sola, porque necesita un path fijo para registrarse en Build Settings).
+
+## Paso 2 — Jugar
+
+Play. Controles: `WASD` moverse, mouse mirar, `E` interactuar, click izquierdo usar la herramienta
+equipada (mantené apretado sobre una mancha para limpiarla) o encender/apagar la linterna, `1`-`4`
+cambiar de herramienta, `Shift` correr, `Ctrl` agachar, `F3` overlay de debug, `R` reiniciar desde
+las pantallas de final.
+
+Progresión esperada: limpiás los 4 objetivos → un mensaje avisa que terminaste → la puerta principal
+no abre → se escucha algo en el sótano → la puerta del sótano se destraba → al entrar, la entidad
+empieza a perseguir en serio → llegar al hueco al fondo del sótano (`EscapeTrigger`) es el final de
+escape; que te agarre la entidad es el final de muerte.
+
+## Limitación conocida: audio
+
+El sistema de audio (ambiente, drone de tensión, pasos, puertas, sonidos paranormales, sonidos de la
+entidad) está completamente armado — `AudioSource`s 3D, slots de `AudioClip` en cada evento,
+crossfade por nivel de actividad — pero **no hay ningún clip de audio en el proyecto**, así que por
+ahora todo eso es silencioso. Es la única pieza que queda 100% provisional a propósito: no hay forma
+de generar o conseguir audio libre de copyright desde acá. Para completarlo alcanza con arrastrar
+clips a los campos correspondientes en el Inspector (`Event_*` bajo `ParanormalEvents`, `AmbientAudio`,
+`FootstepAudio` en el Player, `Entity`) — no hace falta tocar código.
+
+## Si algo no compila o no funciona
+
+- **Falta un asset esperado**: corré primero `Tools → TestingGame → Setup Player + Test Scene` al
+  menos una vez (o esperá a que termine de importar) para que existan `MovementSettings.asset`,
+  `LookSettings.asset`, `ViewmodelSettings.asset` y el `PlayerControls.inputactions`; el bootstrap de
+  la casa los reutiliza y crea `ParanormalSettings.asset`/`EntitySettings.asset` solo si no existen.
+- **"la escena ya tiene House_Root construido"**: borrá `Assets/_Project/Scenes/LimpiezaParanormal.unity`
+  (o los objetos `House_Root`/`Systems`/`Player`/`HUD_Canvas` dentro de ella) si querés reconstruir
+  desde cero.
+- **La entidad no se mueve / warnings de NavMesh**: abrí `Window → AI → Navigation` y confirmá que
+  hay datos horneados; si tocaste la geometría de la casa a mano después de correr el bootstrap,
+  volvé a hornear desde ahí.

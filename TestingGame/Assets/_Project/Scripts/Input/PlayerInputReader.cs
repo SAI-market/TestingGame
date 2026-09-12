@@ -18,6 +18,12 @@ public class PlayerInputReader : MonoBehaviour
     private InputAction sprintAction;
     private InputAction crouchAction;
     private InputAction toggleCursorAction;
+    private InputAction interactAction;
+    private InputAction useToolAction;
+    private InputAction equipVacuumAction;
+    private InputAction equipBroomAction;
+    private InputAction equipClothAction;
+    private InputAction equipFlashlightAction;
 
     public Vector2 Move { get; private set; }
     public Vector2 Look { get; private set; }
@@ -26,6 +32,14 @@ public class PlayerInputReader : MonoBehaviour
     public bool CrouchPressedThisFrame { get; private set; }
     public bool JumpPressedThisFrame { get; private set; }
     public bool JumpHeld { get; private set; }
+
+    public bool InteractPressedThisFrame { get; private set; }
+    public bool UseToolHeld { get; private set; }
+    public bool UseToolPressedThisFrame { get; private set; }
+    public bool EquipVacuumPressedThisFrame { get; private set; }
+    public bool EquipBroomPressedThisFrame { get; private set; }
+    public bool EquipClothPressedThisFrame { get; private set; }
+    public bool EquipFlashlightPressedThisFrame { get; private set; }
 
     /// <summary>True if the last non-zero Look sample came from a mouse rather than a gamepad stick.</summary>
     public bool LastLookWasMouse { get; private set; } = true;
@@ -46,6 +60,12 @@ public class PlayerInputReader : MonoBehaviour
         sprintAction = playerMap.FindAction("Sprint", throwIfNotFound: true);
         crouchAction = playerMap.FindAction("Crouch", throwIfNotFound: true);
         toggleCursorAction = playerMap.FindAction("ToggleCursor", throwIfNotFound: true);
+        interactAction = playerMap.FindAction("Interact", throwIfNotFound: true);
+        useToolAction = playerMap.FindAction("UseTool", throwIfNotFound: true);
+        equipVacuumAction = playerMap.FindAction("EquipVacuum", throwIfNotFound: true);
+        equipBroomAction = playerMap.FindAction("EquipBroom", throwIfNotFound: true);
+        equipClothAction = playerMap.FindAction("EquipCloth", throwIfNotFound: true);
+        equipFlashlightAction = playerMap.FindAction("EquipFlashlight", throwIfNotFound: true);
     }
 
     private void OnEnable()
@@ -80,6 +100,14 @@ public class PlayerInputReader : MonoBehaviour
         {
             SetCursorLocked(Cursor.lockState != CursorLockMode.Locked);
         }
+
+        InteractPressedThisFrame = interactAction.WasPressedThisFrame();
+        UseToolHeld = useToolAction.IsPressed();
+        UseToolPressedThisFrame = useToolAction.WasPressedThisFrame();
+        EquipVacuumPressedThisFrame = equipVacuumAction.WasPressedThisFrame();
+        EquipBroomPressedThisFrame = equipBroomAction.WasPressedThisFrame();
+        EquipClothPressedThisFrame = equipClothAction.WasPressedThisFrame();
+        EquipFlashlightPressedThisFrame = equipFlashlightAction.WasPressedThisFrame();
     }
 
     private static void SetCursorLocked(bool locked)
