@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe11977626de4c1fb795462fd53d9d50, type: 3}
+  m_Name: ViewmodelSettings
+  m_EditorClassIdentifier:
+  lookSwayAmount: 0.03
+  lookSwayRotationAmount: 4
+  lookSwayMaxOffset: 0.04
+  lookSwaySmoothTime: 0.08
+  moveSwayAmount: 0.05
+  moveSwaySmoothTime: 0.15
+  bobAmplitudeWalk: 0.015
+  bobAmplitudeSprint: 0.03
+  bobAmplitudeCrouch: 0.01
+  jumpImpulse: 0.05
+  landImpulseScale: 0.02
+  impulseSpring: 12
+  impulseDamping: 0.6

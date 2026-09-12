@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e44eb3fa38a6476182dadfdbe7ae08ea, type: 3}
+  m_Name: MovementSettings
+  m_EditorClassIdentifier:
+  walkSpeed: 4.5
+  sprintSpeed: 7.5
+  crouchSpeed: 2
+  groundAcceleration: 60
+  groundFriction: 50
+  airAcceleration: 12
+  airFriction: 2
+  gravity: -22
+  risingGravityMultiplier: 1
+  fallingGravityMultiplier: 1.4
+  jumpHeight: 1.15
+  coyoteTime: 0.12
+  jumpBuffer: 0.15
+  jumpCutMultiplier: 0.5
+  maxSlopeAngle: 50
+  slideSpeed: 8
+  groundCheckDistance: 0.15
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 512
+  standHeight: 1.8
+  crouchHeight: 1
+  crouchTransitionTime: 0.15
+  crouchIsToggle: 0
